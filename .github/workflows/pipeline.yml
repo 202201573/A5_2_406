@@ -10,19 +10,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.10
+          python-version: "3.10"
 
-      - run: pip install -r requirements.txt
+      - name: Install dependencies
+        run: pip install -r requirements.txt
 
-      - run: pip install dvc
-
-      - run: dvc pull
-
-      - name: Train
+      - name: Train model
         run: python train.py
 
       - name: Upload artifact
@@ -36,13 +35,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: "3.10"
 
-      - run: pip install -r requirements.txt
+      - name: Install dependencies
+        run: pip install -r requirements.txt
 
       - name: Download artifact
         uses: actions/download-artifact@v4
@@ -51,6 +53,7 @@ jobs:
 
       - name: Check threshold
         run: python check_threshold.py
+
       - name: Mock Docker Build
         run: |
-            echo "Building Docker image for Run ID: $(cat model_info.txt)"
+          echo "Building Docker image for Run ID: $(cat model_info.txt)"
