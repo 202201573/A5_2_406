@@ -1,0 +1,14 @@
+artifact_uri: file:C:/Users/tasne/OneDrive/Desktop/A5_406/mlruns/0/0f84200276484f678b1c20d90b439ce1/artifacts
+end_time: 1774436008483
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 0f84200276484f678b1c20d90b439ce1
+run_name: silent-goat-318
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1774436008410
+status: 3
+tags: []
+user_id: tasne
