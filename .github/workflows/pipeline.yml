@@ -1,74 +1,89 @@
 name: ML Pipeline
 
 on:
-  push:
-    branches: [ main ]
+push:
+branches: [ main ]
 
 jobs:
 
-  validate:
-    runs-on: ubuntu-latest
+validate:
+runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+```
+steps:
+  - name: Checkout repository
+    uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.10"
+  - name: Setup Python
+    uses: actions/setup-python@v5
+    with:
+      python-version: "3.10"
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt
+  - name: Install dependencies
+    run: |
+      pip install -r requirements.txt
+      pip install dvc
 
-      - name: Train model
-        run: python train.py
+  - name: Configure DVC remote
+    run: |
+      dvc remote modify origin auth basic
+      dvc remote modify origin user ${{ secrets.DAGSHUB_USERNAME }}
+      dvc remote modify origin password ${{ secrets.DAGSHUB_TOKEN }}
 
-      - name: Upload model info
-        uses: actions/upload-artifact@v4
-        with:
-          name: model-info
-          path: model_info.txt
+  - name: Pull data
+    run: dvc pull
 
-      - name: Upload mlruns
-        uses: actions/upload-artifact@v4
-        with:
-          name: mlruns
-          path: mlruns
+  - name: Train model
+    run: python train.py
 
-  deploy:
-    needs: validate
-    runs-on: ubuntu-latest
+  - name: Upload model info
+    uses: actions/upload-artifact@v4
+    with:
+      name: model-info
+      path: model_info.txt
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+  - name: Upload mlruns
+    uses: actions/upload-artifact@v4
+    with:
+      name: mlruns
+      path: mlruns
+```
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.10"
+deploy:
+needs: validate
+runs-on: ubuntu-latest
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt
+```
+steps:
+  - name: Checkout repository
+    uses: actions/checkout@v4
 
-      - name: Download model info
-        uses: actions/download-artifact@v4
-        with:
-          name: model-info
+  - name: Setup Python
+    uses: actions/setup-python@v5
+    with:
+      python-version: "3.10"
 
-      - name: Download mlruns
-        uses: actions/download-artifact@v4
-        with:
-          name: mlruns
+  - name: Install dependencies
+    run: pip install -r requirements.txt
 
-      - name: Fix mlruns path
-        run: |
-          mv mlruns/mlruns/* mlruns/ || true
+  - name: Download model info
+    uses: actions/download-artifact@v4
+    with:
+      name: model-info
 
-      - name: Check threshold
-        run: python check_threshold.py
+  - name: Download mlruns
+    uses: actions/download-artifact@v4
+    with:
+      name: mlruns
 
-      - name: Mock Docker Build
-        run: |
-          echo "Building Docker image for Run ID: $(cat model_info.txt)"
+  - name: Fix mlruns path
+    run: |
+      mv mlruns/mlruns/* mlruns/ || true
+
+  - name: Check threshold
+    run: python check_threshold.py
+
+  - name: Mock Docker Build
+    run: |
+      echo "Building Docker image for Run ID: $(cat model_info.txt)"
+```

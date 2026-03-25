@@ -1,0 +1,7 @@
+[core]
+    remote = origin
+['remote "origin"']
+    url = https://dagshub.com/202201573/mlops-ci-cd-pipeline.dvc
+    auth = basic
+    user = 202201573
+    password = 6ea2653a1929bf064820efd34e0e3690afff25d0
