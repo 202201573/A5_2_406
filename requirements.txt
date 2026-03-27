@@ -1,5 +1,3 @@
 mlflow
-pandas
 scikit-learn
-dvc
-dvc-s3
+pandas

@@ -2,8 +2,13 @@ FROM python:3.10-slim
 
 ARG RUN_ID
 
+RUN echo "Downloading model for Run ID: $RUN_ID"
+
 WORKDIR /app
 
-RUN echo "Downloading model for RUN_ID=${RUN_ID}"
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-CMD ["echo", "Model ready"]
+COPY . .
+
+CMD ["echo", "Model server running"]
